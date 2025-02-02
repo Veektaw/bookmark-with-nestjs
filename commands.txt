@@ -1,0 +1,5 @@
+## For test package
+yarn add --dev pactum 
+
+## For env file management
+ yarn add --dev dotenv-cli      

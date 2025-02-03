@@ -27,6 +27,7 @@ describe('App e2e', () => {
 
       prisma = app.get(PrismaService);
       await prisma.cleanDb();
+      pactum.request.setBaseUrl('http://localhost:3000');
     });
 
     afterAll(() => {
@@ -47,7 +48,7 @@ describe('App e2e', () => {
         it('should signup a new user', () => {
           return pactum
             .spec()
-            .post('http://localhost:3000/auth/signup')
+            .post('/auth/signup')
             .withBody(dto) 
             .expectStatus(201).inspect();
         });
@@ -62,7 +63,7 @@ describe('App e2e', () => {
         it('should login a new user', () => {
           return pactum
             .spec()
-            .post('http://localhost:3000/auth/login')
+            .post('/auth/login')
             .withBody(dto) 
             .expectStatus(200);
         });

@@ -4,6 +4,7 @@ import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import * as pactum from 'pactum';
 import { AuthDto, LoginDto } from "src/auth/dto";
+import { EditUserDto } from "src/user/dto";
 
 describe('App e2e', () => {
 
@@ -45,12 +46,22 @@ describe('App e2e', () => {
           lastName: 'Doe'
         };
 
-        it('should throw signup error', () => {
+        it('should throw signup error for empty email', () => {
           return pactum
             .spec()
             .post('/auth/signup')
             .withBody({
               password: "123"
+            }) 
+            .expectStatus(400);
+        });
+
+        it('should throw signup error for empty password', () => {
+          return pactum
+            .spec()
+            .post('/auth/signup')
+            .withBody({
+              email: "veektaw@gmail.com"
             }) 
             .expectStatus(400);
         });
@@ -74,20 +85,59 @@ describe('App e2e', () => {
           return pactum
             .spec()
             .post('/auth/login')
+            .withBody({
+              email: "veektaw@gmail.om",
+              password: "123"
+            }) 
+            .expectStatus(403);
+        });
+
+        it('should login a new user', () => {
+          return pactum
+            .spec()
+            .post('/auth/login')
             .withBody(dto) 
-            .expectStatus(200);
+            .expectStatus(200)
+            .stores('userAt', 'access_token');
         });
     });
 });
 
 
     describe('User', () => {
-      describe('Get Me', () => {
 
+      const dto: EditUserDto = {
+        firstName: 'John',
+        lastName: 'Heinz',
+        email: 'veektaw@gmail.com',
+        password: '123456'
+     
+      }
+      describe('Get Me', () => {
+        it('should get current user', () => {
+          return pactum
+            .spec()
+            .get('/users/me')
+            .withHeaders({
+              Authorization: 'Bearer $S{userAt}'
+            })
+            .withBody(dto)
+            .expectStatus(200);
+        });
       });
 
       describe('Edit User', () => {
-
+        it('should edit a user', () => {
+          return pactum
+            .spec()
+            .patch('/users/edit')
+            .withHeaders({
+              Authorization: 'Bearer $S{userAt}'
+            })
+            .withBody(dto) 
+            .expectStatus(200)
+            // .stores('userAt', 'access_token');
+        });
       });
     });
 

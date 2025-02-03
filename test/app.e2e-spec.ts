@@ -45,12 +45,22 @@ describe('App e2e', () => {
           lastName: 'Doe'
         };
 
+        it('should throw signup error', () => {
+          return pactum
+            .spec()
+            .post('/auth/signup')
+            .withBody({
+              password: "123"
+            }) 
+            .expectStatus(400);
+        });
+
         it('should signup a new user', () => {
           return pactum
             .spec()
             .post('/auth/signup')
             .withBody(dto) 
-            .expectStatus(201).inspect();
+            .expectStatus(201);
         });
       });
 

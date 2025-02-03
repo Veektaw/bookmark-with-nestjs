@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, HttpCode, HttpStatus, InternalServerErrorException, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto, LoginDto } from "./dto";
 
@@ -8,9 +8,18 @@ export class AuthController {
         
     }
 
+    @HttpCode(HttpStatus.CREATED)
     @Post('signup')
-    signup(@Body() dto: AuthDto) {
-        return this.authService.signup(dto);
+    async signup(@Body() dto: AuthDto) {
+        try {
+            const user = await this.authService.signup(dto);
+            return user;
+        } catch (error) {
+            if (error instanceof ForbiddenException) {
+            throw error;
+            }
+            throw new InternalServerErrorException('Something went wrong during signup');
+        }
     }
 
     @HttpCode(HttpStatus.OK)

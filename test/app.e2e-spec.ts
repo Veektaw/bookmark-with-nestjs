@@ -47,9 +47,9 @@ describe('App e2e', () => {
         it('should signup a new user', () => {
           return pactum
             .spec()
-            .post('http://localhost/api/v1/auth/signup')
+            .post('http://localhost:3000/auth/signup')
             .withBody(dto) 
-            .expectStatus(undefined);
+            .expectStatus(201).inspect();
         });
       });
 
@@ -62,9 +62,9 @@ describe('App e2e', () => {
         it('should login a new user', () => {
           return pactum
             .spec()
-            .post('http://localhost/api/v1/auth/login')
+            .post('http://localhost:3000/auth/login')
             .withBody(dto) 
-            .expectStatus(undefined);
+            .expectStatus(200);
         });
     });
 });

@@ -5,6 +5,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import * as pactum from 'pactum';
 import { AuthDto, LoginDto } from "src/auth/dto";
 import { EditUserDto } from "src/user/dto";
+import { BookMarkCreateDto, BookMarkEditDto } from "src/bookmark/dto";
 
 describe('App e2e', () => {
 
@@ -142,6 +143,18 @@ describe('App e2e', () => {
     });
 
     describe('Bookmark', () => {
+      const dto1: BookMarkCreateDto = {
+          title: 'First Bookmark',
+          description: 'www.google.com',
+          link: 'www.google.com'
+        }
+
+        const dto2: BookMarkEditDto = {
+          title: 'First Bookmark',
+          description: 'www.google.com',
+          link: 'www.google.com'
+        }
+
       describe('Get Bookmarks', () => {
         it('should get bookmarks', () => {
           return pactum
@@ -162,27 +175,51 @@ describe('App e2e', () => {
             .withHeaders({
               Authorization: 'Bearer $S{userAt}'
             })
-            .withBody({
-              title: 'First Bookmark',
-              description: 'www.google.com',
-              link: 'www.google.com'
-            })
+            .withBody(dto1)
             .expectStatus(201)
             .stores('bookmarkId', 'id');
         })
       });
 
       describe('Get a Bookmark', () => {
-
+        it('should get a bookmark', () => {
+          return pactum
+            .spec()
+            .get('/bookmarks/{id}')
+            .withPathParams('id', '$S{bookmarkId}')
+            .withHeaders({
+              Authorization: 'Bearer $S{userAt}'
+            })
+            .expectStatus(200);
+        });
       });
 
       describe('Edit Bookmark', () => {
-
+        it('should edit a bookmark', () => {
+          return pactum
+            .spec()
+            .patch('/bookmarks/{id}')
+            .withPathParams('id', '$S{bookmarkId}')
+            .withHeaders({
+              Authorization: 'Bearer $S{userAt}'
+            })
+            .withBody(dto2)
+            .expectStatus(200);
+        });
       });
 
 
       describe('Delete Bookmark', () => {
-
+        it('should delete a bookmark', () => {
+          return pactum
+            .spec()
+            .delete('/bookmarks/{id}')
+            .withPathParams('id', '$S{bookmarkId}')
+            .withHeaders({
+              Authorization: 'Bearer $S{userAt}'
+            })
+            .expectStatus(200);
+        });
       })
     });
 })

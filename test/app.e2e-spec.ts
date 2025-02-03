@@ -143,11 +143,33 @@ describe('App e2e', () => {
 
     describe('Bookmark', () => {
       describe('Get Bookmarks', () => {
-
+        it('should get bookmarks', () => {
+          return pactum
+            .spec()
+            .get('/bookmarks')
+            .withHeaders({
+              Authorization: 'Bearer $S{userAt}'
+            })
+            .expectStatus(200);
+        });
       });
 
       describe('Create Bookmarks', () => {
-
+        it('should create a bookmark', () => {
+          return pactum
+            .spec()
+            .post('/bookmarks')
+            .withHeaders({
+              Authorization: 'Bearer $S{userAt}'
+            })
+            .withBody({
+              title: 'First Bookmark',
+              description: 'www.google.com',
+              link: 'www.google.com'
+            })
+            .expectStatus(201)
+            .stores('bookmarkId', 'id');
+        })
       });
 
       describe('Get a Bookmark', () => {
